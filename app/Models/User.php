@@ -45,4 +45,9 @@ class User extends Authenticatable
     ];
 
     protected $primaryKey = 'id';
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }
