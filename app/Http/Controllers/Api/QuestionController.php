@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QuestionStoreRequest;
 use App\Http\Resources\QuestionResource;
 use App\Models\Question;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -25,9 +25,12 @@ class QuestionController extends Controller
      */
     public function store(QuestionStoreRequest $request)
     {
-        $created_question = Question::create($request->validated());
-
-        return new QuestionResource($created_question);
+        if (Auth::user()) {
+            $created_question = Question::create($request->validated());
+            return new QuestionResource($created_question);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -43,9 +46,13 @@ class QuestionController extends Controller
      */
     public function update(QuestionStoreRequest $request, Question $question)
     {
-        $question->update($request->validated());
-        Gate::authorize('update-user-question', $question);
-        return new QuestionResource($question);
+        if (Auth::user()) {
+            $question->update($request->validated());
+            Gate::authorize('update-user-question', $question);
+            return new QuestionResource($question);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -53,8 +60,12 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        $question->delete();
-
-        return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        if (Auth::user()) {
+            $question->delete();
+            Gate::authorize('delete-user-question', $question);
+            return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 }

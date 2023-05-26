@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AnswerStoreRequest;
 use App\Http\Resources\AnswerResource;
 use App\Models\Answer;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AnswerController extends Controller
@@ -24,9 +25,12 @@ class AnswerController extends Controller
      */
     public function store(AnswerStoreRequest $request)
     {
-        $create_answer = Answer::create($request->validated());
-
-        return new AnswerResource($create_answer);
+        if (Auth::user()) {
+            $create_answer = Answer::create($request->validated());
+            return new AnswerResource($create_answer);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -42,9 +46,14 @@ class AnswerController extends Controller
      */
     public function update(AnswerStoreRequest $request, Answer $answer)
     {
-        $answer->update($request->validated());
+        if (Auth::user()) {
+            $answer->update($request->validated());
+            Gate::authorize('update-user-answer', $answer);
+            return new AnswerResource($answer);
+        } else {
+            abort(403, 'Unauthorized');
+        }
 
-        return new AnswerResource($answer);
     }
 
     /**
@@ -52,8 +61,12 @@ class AnswerController extends Controller
      */
     public function destroy(Answer $answer)
     {
-        $answer->delete();
-
-        return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        if (Auth::user()) {
+            $answer->delete();
+            Gate::authorize('delete-user-answer', $answer);
+            return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 }

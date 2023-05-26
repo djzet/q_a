@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
@@ -16,7 +15,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::all());
+        if (auth()->user()->role_id == 1) {
+            return UserResource::collection(User::all());
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
     }
 
     /**
@@ -24,9 +28,12 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $create_user = User::create($request->validated());
-
-        return new UserResource($create_user);
+        if (auth()->user()->role_id == 1) {
+            $create_user = User::create($request->validated());
+            return new UserResource($create_user);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -34,7 +41,11 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        if (auth()->user()->role_id == 1) {
+            return new UserResource($user);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -42,9 +53,12 @@ class UserController extends Controller
      */
     public function update(UserStoreRequest $request, User $user)
     {
-        $user->update($request->validated());
-
-        return new UserResource($user);
+        if (auth()->user()->role_id == 1) {
+            $user->update($request->validated());
+            return new UserResource($user);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 
     /**
@@ -52,8 +66,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-
-        return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        if (auth()->user()->role_id == 1) {
+            $user->delete();
+            return response(null, ResponseAlias::HTTP_NO_CONTENT);
+        } else {
+            abort(403, 'Unauthorized');
+        }
     }
 }
