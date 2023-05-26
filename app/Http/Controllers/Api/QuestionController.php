@@ -7,6 +7,7 @@ use App\Http\Requests\QuestionStoreRequest;
 use App\Http\Resources\QuestionResource;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class QuestionController extends Controller
@@ -43,7 +44,7 @@ class QuestionController extends Controller
     public function update(QuestionStoreRequest $request, Question $question)
     {
         $question->update($request->validated());
-
+        Gate::authorize('update-user-question', $question);
         return new QuestionResource($question);
     }
 
