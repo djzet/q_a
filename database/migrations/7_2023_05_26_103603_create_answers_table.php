@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->foreignIdFor(Question::class)->index();
             $table->string('body');
         });
+        Schema::table('answers', function (Blueprint $table) {
+            $table->foreign('question_id')->references('id')->on('questions');
+            $table->foreign('user_id')->references('id')->on('users');
+        });
     }
 
     /**

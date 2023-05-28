@@ -26,10 +26,10 @@ Route::group([
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('register', [AuthController::class, 'register']);
     Route::get('me', [AuthController::class, 'me']);
-
 });
 
-Route::apiResource('users', UserController::class)->middleware('auth:api');
+Route::apiResource('users', UserController::class)->middleware(['auth:api', 'admin']);
 Route::apiResource('questions', QuestionController::class);
 Route::apiResource('answers', AnswerController::class)->middleware('auth:api');

@@ -24,7 +24,6 @@ class QuestionStoreRequest extends FormRequest
         return [
             'name' => 'required|max:255',
             'body' => 'required|max:255',
-            'user_id' => 'required'
         ];
     }
 }

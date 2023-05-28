@@ -26,10 +26,16 @@ class QuestionController extends Controller
     public function store(QuestionStoreRequest $request)
     {
         if (Auth::user()) {
-            $created_question = Question::create($request->validated());
-            return new QuestionResource($created_question);
-        } else {
-            abort(403, 'Unauthorized');
+            if ($request->validated()) {
+                $created_question = Question::create([
+                    'name' => $request->name,
+                    'body' => $request->body,
+                    'user_id' => Auth::id(),
+                ]);
+                return new QuestionResource($created_question);
+            } else {
+                abort(403, 'Unauthorized');
+            }
         }
     }
 
@@ -47,11 +53,17 @@ class QuestionController extends Controller
     public function update(QuestionStoreRequest $request, Question $question)
     {
         if (Auth::user()) {
-            $question->update($request->validated());
             Gate::authorize('update-user-question', $question);
-            return new QuestionResource($question);
-        } else {
-            abort(403, 'Unauthorized');
+            if ($request->validated()) {
+                $question->update([
+                    'name' => $request->name,
+                    'body' => $request->body,
+                    'user_id' => Auth::id(),
+                ]);
+                return new QuestionResource($question);
+            } else {
+                abort(403, 'Unauthorized');
+            }
         }
     }
 
@@ -61,8 +73,8 @@ class QuestionController extends Controller
     public function destroy(Question $question)
     {
         if (Auth::user()) {
-            $question->delete();
             Gate::authorize('delete-user-question', $question);
+            $question->delete();
             return response(null, ResponseAlias::HTTP_NO_CONTENT);
         } else {
             abort(403, 'Unauthorized');

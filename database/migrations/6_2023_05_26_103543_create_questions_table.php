@@ -17,6 +17,9 @@ return new class extends Migration {
             $table->string('name');
             $table->string('body');
         });
+        Schema::table('questions', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users');
+        });
     }
 
     /**

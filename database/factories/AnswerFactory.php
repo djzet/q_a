@@ -17,7 +17,9 @@ class AnswerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'body' => $this->faker->text(),
+            'user_id' => rand(1, 3),
+            'question_id' => rand(1, 10),
         ];
     }
 }

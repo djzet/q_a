@@ -23,7 +23,6 @@ class AnswerStoreRequest extends FormRequest
     {
         return [
             'question_id' => 'required',
-            'user_id' => 'required',
             'body' => 'required|max:255',
         ];
     }

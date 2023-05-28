@@ -26,10 +26,16 @@ class AnswerController extends Controller
     public function store(AnswerStoreRequest $request)
     {
         if (Auth::user()) {
-            $create_answer = Answer::create($request->validated());
-            return new AnswerResource($create_answer);
-        } else {
-            abort(403, 'Unauthorized');
+            if ($request->validated()) {
+                $create_answer = Answer::create([
+                    'body' => $request->body,
+                    'user_id' => Auth::id(),
+                    'question_id' => $request->question_id,
+                ]);
+                return new AnswerResource($create_answer);
+            } else {
+                abort(403, 'Unauthorized');
+            }
         }
     }
 
@@ -47,13 +53,19 @@ class AnswerController extends Controller
     public function update(AnswerStoreRequest $request, Answer $answer)
     {
         if (Auth::user()) {
-            $answer->update($request->validated());
             Gate::authorize('update-user-answer', $answer);
-            return new AnswerResource($answer);
-        } else {
-            abort(403, 'Unauthorized');
+            if ($request->validated()) {
+                $answer->update([
+                    'id' => $answer->id,
+                    'body' => $request->body,
+                    'user_id' => Auth::id(),
+                    'question_id' => $request->question_id,
+                ]);
+                return new AnswerResource($answer);
+            } else {
+                abort(403, 'Unauthorized');
+            }
         }
-
     }
 
     /**

@@ -43,8 +43,9 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->id === $question->user_id) {
                 return Response::allow();
             }
-            return Response::deny('You cannot edit someone else is question!');
+            return Response::deny('You cannot delete someone else is question!');
         });
+
         Gate::define('update-user-answer', function (User $user, Answer $answer) {
             if ($user->id === $answer->user_id) {
                 return Response::allow();
@@ -55,7 +56,7 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->id === $answer->user_id) {
                 return Response::allow();
             }
-            return Response::deny('You cannot edit someone else is answer!');
+            return Response::deny('You cannot delete someone else is answer!');
         });
     }
 }
